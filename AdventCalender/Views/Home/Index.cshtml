@@ -1,8 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<AdventCalender.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Маркетплейс Адвент-календарей";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Выберите продавца</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var seller in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@seller.StoreName</h5>
+                        <p class="card-text text-muted">@seller.Description</p>
+                        <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@seller.Id" 
+                           class="btn btn-primary">Открыть календарь</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

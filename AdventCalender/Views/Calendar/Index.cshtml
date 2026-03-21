@@ -1,0 +1,47 @@
+﻿@model AdventCalender.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Календарь: " + Model.StoreName;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Главная</a></li>
+        <li class="breadcrumb-item active">@Model.StoreName</li>
+      </ol>
+    </nav>
+
+    <h2 class="mb-4 text-center">Адвент-календарь от @Model.StoreName</h2>
+
+    <div class="advent-grid d-flex flex-wrap justify-content-center gap-3">
+        @for (int i = 1; i <= 24; i++)
+        {
+            var dayData = Model.AdventDays.FirstOrDefault(d => d.DayNumber == i);
+            
+            <div class="card text-center @(dayData != null ? "border-success" : "bg-light")" style="width: 150px; height: 150px;">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h3 class="card-title">@i</h3>
+                    @if (dayData != null)
+                    {
+                        <a asp-action="DayDetails" asp-route-id="@dayData.Id" class="btn btn-sm btn-outline-success">Открыть</a>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Скоро</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .advent-grid .card {
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+    .advent-grid .card:hover {
+        transform: scale(1.05);
+    }
+</style>

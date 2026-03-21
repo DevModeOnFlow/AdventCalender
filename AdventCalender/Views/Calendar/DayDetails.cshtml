@@ -1,0 +1,39 @@
+﻿@model AdventCalender.Models.AdventDay
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="row g-0">
+                    <div class="col-md-6">
+                        <img src="@(Model.ImageUrl ?? "https://via.placeholder.com/400")" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <h5 class="card-title">День @Model.DayNumber: @Model.Title</h5>
+                            <p class="card-text">@Model.Description</p>
+                            <h4 class="text-primary">@Model.Price.ToString("C")</h4>
+                            
+                            <hr />
+                            
+                            @if (Model.IsPaid)
+                            {
+                                <div class="alert alert-success">
+                                    Этот товар уже оплачен! Вам доступен эксклюзивный контент.
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-action="BuyStub" method="post">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-warning btn-lg w-100">Купить (Тест)</button>
+                                </form>
+                            }
+                            <a asp-action="Index" asp-route-sellerId="@Model.SellerId" class="btn btn-link mt-3">Назад к календарю</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
