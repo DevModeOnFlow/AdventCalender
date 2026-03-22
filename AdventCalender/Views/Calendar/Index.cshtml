@@ -1,47 +1,92 @@
 ﻿@model AdventCalender.Models.ApplicationUser
 
 @{
-    ViewData["Title"] = "Календарь: " + Model.StoreName;
+    ViewData["Title"] = Model.StoreName;
+
+    int fakeToday = 3; 
 }
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Главная</a></li>
-        <li class="breadcrumb-item active">@Model.StoreName</li>
-      </ol>
-    </nav>
+<div class="container py-4">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <h2 class="mb-4 text-center">Адвент-календарь от @Model.StoreName</h2>
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-danger">🎄 @Model.StoreName</h1>
+        <p class="lead text-muted">Найдите подарок сегодняшнего дня!</p>
+    </div>
 
-    <div class="advent-grid d-flex flex-wrap justify-content-center gap-3">
+    <div class="row g-4">
         @for (int i = 1; i <= 24; i++)
         {
             var dayData = Model.AdventDays.FirstOrDefault(d => d.DayNumber == i);
-            
-            <div class="card text-center @(dayData != null ? "border-success" : "bg-light")" style="width: 150px; height: 150px;">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <h3 class="card-title">@i</h3>
-                    @if (dayData != null)
-                    {
-                        <a asp-action="DayDetails" asp-route-id="@dayData.Id" class="btn btn-sm btn-outline-success">Открыть</a>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Скоро</span>
-                    }
-                </div>
+            bool isLocked = i > fakeToday; 
+
+            <div class="col-6 col-md-4 col-lg-2">
+                @if (isLocked)
+                {
+                    <div class="card h-100 border-0 shadow-sm locked-card bg-gradient">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
+                            <span class="display-6 fw-bold text-white opacity-50">@i</span>
+                            <div class="mt-2 text-white opacity-75">
+                                <span style="font-size: 2rem;">🎁</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card h-100 border-0 shadow-sm opened-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
+                            <span class="display-6 fw-bold text-danger">@i</span>
+                            
+                            @if (dayData != null)
+                            {
+                                <small class="text-muted mb-2 text-center" style="font-size: 0.75rem;">
+                                    @dayData.Title
+                                </small>
+                                <a asp-action="DayDetails" asp-route-id="@dayData.Id" 
+                                   class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm mt-auto">
+                                    Открыть
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small mt-auto">Пусто</span>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         }
     </div>
 </div>
 
 <style>
-    .advent-grid .card {
-        transition: transform 0.2s;
-        cursor: pointer;
+    body { background-color: #f4f7f6; }
+
+    .locked-card {
+        background: #adb5bd; 
+        border-radius: 20px;
+        cursor: not-allowed;
     }
-    .advent-grid .card:hover {
-        transform: scale(1.05);
+
+    .opened-card {
+        background: #ffffff;
+        border-radius: 20px;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    .opened-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(220, 53, 69, 0.2) !important;
+    }
+    
+    .display-6 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 </style>

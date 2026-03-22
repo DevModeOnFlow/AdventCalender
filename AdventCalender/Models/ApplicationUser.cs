@@ -8,7 +8,6 @@ namespace AdventCalender.Models
         public string? Description { get; set; }
         public string? LogoUrl { get; set; }
 
-        // Связь с товарами календаря
         public virtual ICollection<AdventDay> AdventDays { get; set; } = new List<AdventDay>();
     }
 }

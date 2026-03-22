@@ -5,56 +5,34 @@ namespace AdventCalender.Data
 {
     public static class DbInitializer
     {
-        public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public static async Task Initialize(ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager) 
         {
             context.Database.EnsureCreated();
 
-            // Проверяем, есть ли уже продавцы
-            if (context.Users.Any(u => u.StoreName != null))
+            string[] roleNames = { "Buyer", "Seller" };
+            foreach (var roleName in roleNames)
             {
-                return; // База уже заполнена
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
             }
 
-            // 1. Создаем тестового продавца
+            if (context.Users.Any(u => u.StoreName != null)) return;
+
             var seller = new ApplicationUser
             {
-                UserName = "test@seller.com",
-                Email = "test@seller.com",
-                StoreName = "Новогодняя Лавка 🎄",
-                Description = "Лучшие подарки и сладости для вашего праздника!",
+                UserName = "seller@test.com",
+                Email = "seller@test.com",
+                StoreName = "Магазин Чудес",
                 EmailConfirmed = true
             };
-
-            await userManager.CreateAsync(seller, "Password123!");
-
-            // 2. Добавляем несколько дней в календарь для этого продавца
-            var days = new List<AdventDay>
+            if ((await userManager.CreateAsync(seller, "Pass123!")).Succeeded)
             {
-                new AdventDay {
-                    DayNumber = 1,
-                    Title = "Имбирный пряник",
-                    Description = "Вкусный домашний пряник с корицей",
-                    Price = 150.00m,
-                    SellerId = seller.Id
-                },
-                new AdventDay {
-                    DayNumber = 2,
-                    Title = "Набор свечей",
-                    Description = "Ароматические свечи с запахом хвои",
-                    Price = 450.00m,
-                    SellerId = seller.Id
-                },
-                new AdventDay {
-                    DayNumber = 3,
-                    Title = "Горячий шоколад",
-                    Description = "Порция густого шоколада с маршмэллоу",
-                    Price = 200.00m,
-                    SellerId = seller.Id
-                }
-            };
-
-            context.AdventDays.AddRange(days);
-            await context.SaveChangesAsync();
+                await userManager.AddToRoleAsync(seller, "Seller"); 
+            }
         }
     }
 }

@@ -16,10 +16,6 @@ namespace AdventCalender.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            // Настройка для работы с PostgreSQL: 
-            // По умолчанию EF может создавать колонки типа 'timestamp with time zone'.
-            // Если возникнут проблемы с датами, это настраивается здесь.
         }
     }
 }

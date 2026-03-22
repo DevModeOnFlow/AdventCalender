@@ -22,10 +22,39 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
+
+
+                    <div class="navbar-nav ms-auto align-items-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-bold text-dark px-3" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                                    <span class="me-1">👤</span> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
+                                    @if (User.IsInRole("Seller"))
+                                    {
+                                        <li><a class="dropdown-item py-2" asp-controller="Seller" asp-action="Dashboard">📈 Мой Магазин</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">Выйти</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <a class="btn btn-link text-decoration-none text-dark fw-semibold me-2 px-3 hover-lift" 
+                               asp-controller="Account" asp-action="Login">Вход</a>
+        
+                            <a class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold hover-glow" 
+                               asp-controller="Account" asp-action="Register">Регистрация</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>

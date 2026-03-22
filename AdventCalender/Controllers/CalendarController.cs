@@ -13,7 +13,6 @@ namespace AdventCalender.Controllers
             _context = context;
         }
 
-        // Страница календаря (сетка дней)
         public async Task<IActionResult> Index(string sellerId)
         {
             var seller = await _context.Users
@@ -25,7 +24,6 @@ namespace AdventCalender.Controllers
             return View(seller);
         }
 
-        // Детали конкретного дня/товара
         public async Task<IActionResult> DayDetails(int id)
         {
             var day = await _context.AdventDays
@@ -34,19 +32,29 @@ namespace AdventCalender.Controllers
 
             if (day == null) return NotFound();
 
+            if (IsDayLocked(day.DayNumber))
+            {
+                TempData["Message"] = $"Этот подарок откроется только {day.DayNumber} декабря!";
+                return RedirectToAction("Index", new { sellerId = day.SellerId });
+            }
+
             return View(day);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> BuyStub(int id)
+        private bool IsDayLocked(int dayNumber)
         {
-            var day = await _context.AdventDays.FindAsync(id);
-            if (day != null)
-            {
-                day.IsPaid = true; // Заглушка оплаты
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction("DayDetails", new { id = id });
+            var now = DateTime.Now;
+
+            var fakeNow = new DateTime(2024, 12, 5);
+            return dayNumber > fakeNow.Day;
+
+            /* 
+            // РЕАЛЬНАЯ ЛОГИКА (раскомментировать в декабре):
+            if (now.Year > 2024) return false; // Прошлые года открыты
+            if (now.Month < 12) return true;   // До декабря всё закрыто
+            if (now.Month > 12) return false;  // После декабря всё открыто
+            return dayNumber > now.Day;        // В декабре закрыто всё, что позже текущего дня
+            */
         }
     }
 }
