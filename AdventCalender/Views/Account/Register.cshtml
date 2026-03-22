@@ -3,44 +3,51 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card shadow-lg border-0">
+            <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-                    <h2 class="text-center mb-4">Регистрация</h2>
+                    <h2 class="text-center mb-4 fw-bold">🎁 Регистрация</h2>
                     <form asp-action="Register" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input asp-for="Email" class="form-control" />
+                            <label class="form-label text-muted small fw-bold">Email</label>
+                            <input asp-for="Email" class="form-control form-control-lg bg-light border-0 shadow-sm" placeholder="mail@example.com" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Пароль</label>
-                            <input asp-for="Password" class="form-control" />
+                            <label class="form-label text-muted small fw-bold">Пароль</label>
+                            <input asp-for="Password" type="password" id="pass1" class="form-control form-control-lg bg-light border-0 shadow-sm" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Повторите пароль</label>
-                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <label class="form-label text-muted small fw-bold">Повторите пароль</label>
+                            <input asp-for="ConfirmPassword" type="password" id="pass2" class="form-control form-control-lg bg-light border-0 shadow-sm" />
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="showPassCheck" onclick="togglePasswordVisibility()">
+                            <label class="form-check-label small text-muted" for="showPassCheck">Показать пароли</label>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label d-block">Я хочу быть:</label>
+                            <label class="form-label d-block text-muted small fw-bold">Я хочу быть:</label>
                             <div class="btn-group w-100" role="group">
                                 <input type="radio" class="btn-check" name="Role" id="roleBuyer" value="Buyer" checked onchange="toggleStoreField(false)">
-                                <label class="btn btn-outline-primary" for="roleBuyer">Покупателем</label>
+                                <label class="btn btn-outline-primary rounded-start-pill py-2" for="roleBuyer">Покупателем</label>
 
                                 <input type="radio" class="btn-check" name="Role" id="roleSeller" value="Seller" onchange="toggleStoreField(true)">
-                                <label class="btn btn-outline-primary" for="roleSeller">Продавцом</label>
+                                <label class="btn btn-outline-primary rounded-end-pill py-2" for="roleSeller">Продавцом</label>
                             </div>
                         </div>
 
-                        <div id="storeNameField" class="mb-3 d-none">
-                            <label class="form-label">Название вашего магазина</label>
-                            <input asp-for="StoreName" class="form-control" />
+                        <div id="storeNameField" class="mb-4 d-none">
+                            <label class="form-label text-muted small fw-bold">Название магазина</label>
+                            <input asp-for="StoreName" class="form-control form-control-lg bg-light border-0 shadow-sm" placeholder="Напр: Лавка Чудес" />
                         </div>
 
-                        <button type="submit" class="btn btn-danger w-100 py-2">Создать аккаунт</button>
+                        <button type="submit" class="btn btn-success btn-lg w-100 py-3 rounded-pill shadow fw-bold hover-glow mt-2 border-0" style="background: linear-gradient(45deg, #28a745, #218838);">
+                            Создать аккаунт ✨
+                        </button>
                     </form>
                 </div>
             </div>
@@ -49,9 +56,17 @@
 </div>
 
 <script>
+    function togglePasswordVisibility() {
+        const p1 = document.getElementById("pass1");
+        const p2 = document.getElementById("pass2");
+        const isChecked = document.getElementById("showPassCheck").checked;
+        
+        p1.type = isChecked ? "text" : "password";
+        p2.type = isChecked ? "text" : "password";
+    }
+
     function toggleStoreField(show) {
         const field = document.getElementById('storeNameField');
-        if (show) field.classList.remove('d-none');
-        else field.classList.add('d-none');
+        field.classList.toggle('d-none', !show);
     }
 </script>

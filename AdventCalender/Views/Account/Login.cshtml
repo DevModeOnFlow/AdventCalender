@@ -3,35 +3,41 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card shadow-lg border-0">
+            <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
-                    <h2 class="text-center mb-4 fw-bold text-danger">Вход в аккаунт</h2>
+                    <h2 class="text-center mb-4 fw-bold text-danger">🚀 Вход</h2>
                     
                     <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Email адрес</label>
-                            <input asp-for="Email" class="form-control form-control-lg" placeholder="example@mail.com" />
-                            <span asp-validation-for="Email" class="text-danger small"></span>
+                            <label class="form-label text-muted small fw-bold">Email</label>
+                            <input asp-for="Email" class="form-control form-control-lg bg-light border-0 shadow-sm" placeholder="mail@example.com" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Пароль</label>
-                            <input asp-for="Password" class="form-control form-control-lg" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
+                            <label class="form-label text-muted small fw-bold">Пароль</label>
+                            <input asp-for="Password" type="password" id="loginPass" class="form-control form-control-lg bg-light border-0 shadow-sm" />
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label small text-muted">Запомнить меня</label>
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="showLoginPass" onclick="toggleLoginPass()">
+                                <label class="form-check-label small text-muted" for="showLoginPass">Показать</label>
+                            </div>
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label small text-muted">Запомнить меня</label>
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn btn-danger w-100 py-2 mb-3 shadow-sm">Войти</button>
+                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3 rounded-pill shadow fw-bold hover-glow mb-4 border-0" style="background: linear-gradient(45deg, #dc3545, #bb2d3b);">
+                            Войти в аккаунт 🔓
+                        </button>
                         
                         <div class="text-center">
                             <span class="small text-muted">Нет аккаунта?</span>
-                            <a asp-action="Register" class="small text-decoration-none fw-bold">Зарегистрироваться</a>
+                            <a asp-action="Register" class="small text-decoration-none fw-bold ms-1 text-primary">Создать новый</a>
                         </div>
                     </form>
                 </div>
@@ -39,3 +45,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleLoginPass() {
+        const p = document.getElementById("loginPass");
+        const isChecked = document.getElementById("showLoginPass").checked;
+        p.type = isChecked ? "text" : "password";
+    }
+</script>
