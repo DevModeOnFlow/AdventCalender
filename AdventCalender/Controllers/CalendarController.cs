@@ -27,11 +27,21 @@ namespace AdventCalender.Controllers
 
         public async Task<IActionResult> DayDetails(int id)
         {
-            var day = await _context.AdventDays
-                .Include(d => d.Seller)
-                .FirstOrDefaultAsync(d => d.Id == id);
-
+            var day = await _context.AdventDays.Include(d => d.Seller).FirstOrDefaultAsync(d => d.Id == id);
             if (day == null) return NotFound();
+
+            var now = DateTime.Now;
+            var currentTime = now.TimeOfDay;
+
+            bool isTooEarly = currentTime < day.StartTime;
+            bool isTooLate = currentTime > day.EndTime;
+
+
+            if (isTooEarly || isTooLate)
+            {
+                TempData["Message"] = "Извините, это предложение сейчас недоступно!";
+                return RedirectToAction("Index", new { sellerId = day.SellerId });
+            }
 
             return View(day);
         }

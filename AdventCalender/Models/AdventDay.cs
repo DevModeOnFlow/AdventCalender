@@ -21,6 +21,9 @@ namespace AdventCalender.Models
         public string? ImageUrl { get; set; }
         public bool IsPaid { get; set; } = false;
 
+        public TimeSpan StartTime { get; set; } = new TimeSpan(9, 0, 0);
+        public TimeSpan EndTime { get; set; } = new TimeSpan(21, 0, 0);
+
         public string SellerId { get; set; } = string.Empty;
 
         public virtual ApplicationUser? Seller { get; set; }

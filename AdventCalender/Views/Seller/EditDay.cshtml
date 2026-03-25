@@ -27,9 +27,19 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label asp-for="StartTime" class="form-label small fw-bold text-uppercase">Время открытия</label>
+                                <input asp-for="StartTime" type="time" class="form-control shadow-sm" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndTime" class="form-label small fw-bold text-uppercase">Время закрытия</label>
+                                <input asp-for="EndTime" type="time" class="form-control shadow-sm" required />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label small fw-bold">Цена ($)</label>
                                 <input asp-for="Price" type="number" step="0.01" class="form-control" />
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label small fw-bold">URL картинки</label>
                                 <input asp-for="ImageUrl" class="form-control" placeholder="http://..." />

@@ -1,35 +1,97 @@
 ﻿@model IEnumerable<AdventCalender.Models.ApplicationUser>
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-3 fw-bold">🎁 Advent Marketplace</h1>
-        <p class="lead">Выберите календарь и забирайте подарки каждый день!</p>
+@{
+    ViewData["Title"] = "Маркетплейс";
+}
+
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-danger mb-1">🎁 Advent Marketplace</h2>
+        <p class="text-muted small">Найдите свой идеальный адвент-календарь</p>
     </div>
 
-    <div class="row g-4">
-        @foreach (var seller in Model)
-        {
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
-                    <div class="card-body p-4 text-center">
-                        <div class="bg-danger bg-opacity-10 rounded-circle d-inline-block p-3 mb-3">
-                            <span class="h2 mb-0">🏪</span>
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-5 col-lg-4"> 
+            <form asp-action="Index" method="get" class="shadow-sm rounded-pill p-1 bg-white border d-flex align-items-center" style="height: 42px;">
+                <input type="text" name="searchString" 
+                       value="@ViewData["CurrentFilter"]" 
+                       class="form-control border-0 bg-transparent rounded-pill px-3 py-1 small" 
+                       placeholder="Поиск магазина..." 
+                       style="box-shadow: none; font-size: 0.85rem;">
+                
+                @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                {
+                    <a asp-action="Index" class="text-muted me-2" title="Сбросить">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                }
+
+                <button type="submit" class="btn btn-danger rounded-pill px-3 py-1 btn-sm fw-bold shadow-sm h-100">
+                    Найти
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h4 class="text-muted">Ничего не найдено 😕</h4>
+            <a asp-action="Index" class="btn btn-sm btn-outline-danger mt-2 rounded-pill px-3">Сбросить поиск</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3"> 
+            @foreach (var seller in Model)
+            {
+                <div class="col-md-4 col-lg-3"> 
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift overflow-hidden bg-white">
+                        <div class="card-body p-3 text-center">
+                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-block p-3 mb-2">
+                                <span class="h3 mb-0">🏪</span>
+                            </div>
+                            <h5 class="fw-bold mb-1">@seller.StoreName</h5>
+                            <p class="text-muted mb-2" style="font-size: 0.75rem; min-height: 35px;">
+                                @(seller.Description?.Length > 60 ? seller.Description.Substring(0, 57) + "..." : seller.Description)
+                            </p>
+                            
+                            <div class="badge bg-light text-danger border rounded-pill px-2 py-1" style="font-size: 0.7rem;">
+                                📅 @seller.CalendarDaysCount дней
+                            </div>
                         </div>
-                        <h4 class="fw-bold">@seller.StoreName</h4>
-                        <p class="text-muted small">@seller.Description</p>
-                        
-                        <div class="badge bg-light text-dark mb-3">
-                            📅 Календарь на @(seller.CalendarDaysCount > 0 ? seller.CalendarDaysCount : 24) дня
+                        <div class="card-footer bg-transparent border-0 p-3 pt-0 text-center">
+                            <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@seller.Id" 
+                               class="btn btn-danger btn-sm w-100 rounded-pill py-2 fw-bold shadow-sm hover-grow">
+                               Открыть календарь
+                            </a>
                         </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 p-4 pt-0">
-                        <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@seller.Id" 
-                           class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow-sm">
-                           Смотреть календарь
-                        </a>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 </div>
+
+<style>
+    body { background-color: #f8f9fa; }
+
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .hover-grow {
+        transition: transform 0.2s;
+    }
+    .hover-grow:hover {
+        transform: scale(1.03);
+    }
+
+    .rounded-4 { border-radius: 1rem; }
+    
+    .small { font-size: 0.85rem; }
+</style>
