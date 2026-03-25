@@ -27,7 +27,8 @@ namespace AdventCalender.Controllers
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    StoreName = model.StoreName 
+                    Nickname = model.Nickname,
+                    StoreName = model.StoreName
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -37,6 +38,7 @@ namespace AdventCalender.Controllers
                     await _userManager.AddToRoleAsync(user, model.Role);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+
                     return RedirectToAction("Index", "Home");
                 }
 

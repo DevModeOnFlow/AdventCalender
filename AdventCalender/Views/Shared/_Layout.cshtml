@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using AdventCalender.Models
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -24,22 +28,35 @@
                         </li>
                     </ul>
 
-
                     <div class="navbar-nav ms-auto align-items-center">
                         @if (User.Identity.IsAuthenticated)
                         {
+                            var user = await UserManager.GetUserAsync(User);
+                            var nickname = user?.Nickname ?? User.Identity.Name;
+
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fw-bold text-dark px-3" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
-                                    <span class="me-1">👤</span> @User.Identity.Name
+                                <a class="nav-link dropdown-toggle d-flex align-items-center fw-bold text-dark" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                
+                                    <!-- Значок Роли -->
+                                    @if (User.IsInRole("Seller"))
+                                    {
+                                        <span class="badge rounded-pill bg-warning text-dark me-2 shadow-sm" style="font-size: 0.7rem;">ПРОДАВЕЦ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-info text-dark me-2 shadow-sm" style="font-size: 0.7rem;">ПОКУПАТЕЛЬ</span>
+                                    }
+
+                                    <span class="text-truncate" style="max-width: 150px;">@nickname</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
+                                    <li class="px-3 py-2 small text-muted border-bottom">@User.Identity.Name</li>
                                     @if (User.IsInRole("Seller"))
                                     {
                                         <li><a class="dropdown-item py-2" asp-controller="Seller" asp-action="Dashboard">📈 Мой Магазин</a></li>
-                                        <li><hr class="dropdown-divider"></li>
                                     }
                                     <li>
-                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-2">
                                             <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">Выйти</button>
                                         </form>
                                     </li>
@@ -48,13 +65,11 @@
                         }
                         else
                         {
-                            <a class="btn btn-link text-decoration-none text-dark fw-semibold me-2 px-3 hover-lift" 
-                               asp-controller="Account" asp-action="Login">Вход</a>
-        
-                            <a class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold hover-glow" 
-                               asp-controller="Account" asp-action="Register">Регистрация</a>
+                            <a class="nav-link text-dark me-2 fw-semibold" asp-controller="Account" asp-action="Login">Вход</a>
+                            <a class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold hover-glow" asp-controller="Account" asp-action="Register">✨ Регистрация</a>
                         }
                     </div>
+                    
                 </div>
             </div>
         </nav>

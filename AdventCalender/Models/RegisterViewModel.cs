@@ -4,6 +4,10 @@ namespace AdventCalender.Models
 {
     public class RegisterViewModel
     {
+        [Required(ErrorMessage = "Придумайте себе никнейм")]
+        [Display(Name = "Никнейм")]
+        public string Nickname { get; set; } = string.Empty;
+
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
