@@ -26,26 +26,28 @@ namespace AdventCalender.Controllers
                 .Include(u => u.AdventDays)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (user == null) return NotFound();
+            if (user != null && user.CalendarDaysCount == 0)
+            {
+                user.CalendarDaysCount = 24;
+                await _userManager.UpdateAsync(user);
+            }
 
             return View(user);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStore(string storeName, string description)
+        public async Task<IActionResult> UpdateStore(string storeName, string description, int calendarDaysCount)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
                 user.StoreName = storeName;
                 user.Description = description;
+                user.CalendarDaysCount = (calendarDaysCount > 0) ? calendarDaysCount : 24;
 
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    TempData["Success"] = "Данные магазина успешно обновлены!";
-                }
+                await _userManager.UpdateAsync(user);
+                TempData["Success"] = "Настройки магазина обновлены!";
             }
             return RedirectToAction(nameof(Dashboard));
         }
@@ -53,25 +55,13 @@ namespace AdventCalender.Controllers
         public async Task<IActionResult> EditDay(int? id, int dayNumber)
         {
             var userId = _userManager.GetUserId(User);
-
             if (id.HasValue)
             {
-                var day = await _context.AdventDays
-                    .FirstOrDefaultAsync(d => d.Id == id && d.SellerId == userId);
-
-                if (day == null) return Forbid(); 
-
+                var day = await _context.AdventDays.FirstOrDefaultAsync(d => d.Id == id && d.SellerId == userId);
+                if (day == null) return NotFound();
                 return View(day);
             }
-            else
-            {
-                var newDay = new AdventDay
-                {
-                    DayNumber = dayNumber,
-                    SellerId = userId!
-                };
-                return View(newDay);
-            }
+            return View(new AdventDay { DayNumber = dayNumber, SellerId = userId! });
         }
 
         [HttpPost]
@@ -81,37 +71,23 @@ namespace AdventCalender.Controllers
             var userId = _userManager.GetUserId(User);
             model.SellerId = userId!;
 
+            ModelState.Remove("Seller");
+            ModelState.Remove("SellerId");
+
             if (ModelState.IsValid)
             {
                 if (model.Id == 0)
                 {
-                    var existingDay = await _context.AdventDays
-                        .AnyAsync(d => d.DayNumber == model.DayNumber && d.SellerId == userId);
-
-                    if (existingDay)
-                    {
-                        ModelState.AddModelError("", "Этот день в календаре уже заполнен.");
-                        return View("EditDay", model);
-                    }
-
                     _context.AdventDays.Add(model);
                 }
                 else
                 {
-                    var dbDay = await _context.AdventDays
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(d => d.Id == model.Id && d.SellerId == userId);
-
-                    if (dbDay == null) return Forbid();
-
                     _context.AdventDays.Update(model);
                 }
-
                 await _context.SaveChangesAsync();
                 TempData["Success"] = $"День {model.DayNumber} успешно сохранен!";
                 return RedirectToAction(nameof(Dashboard));
             }
-
             return View("EditDay", model);
         }
 
@@ -119,16 +95,12 @@ namespace AdventCalender.Controllers
         public async Task<IActionResult> DeleteDay(int id)
         {
             var userId = _userManager.GetUserId(User);
-            var day = await _context.AdventDays
-                .FirstOrDefaultAsync(d => d.Id == id && d.SellerId == userId);
-
+            var day = await _context.AdventDays.FirstOrDefaultAsync(d => d.Id == id && d.SellerId == userId);
             if (day != null)
             {
                 _context.AdventDays.Remove(day);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Запись удалена.";
             }
-
             return RedirectToAction(nameof(Dashboard));
         }
     }

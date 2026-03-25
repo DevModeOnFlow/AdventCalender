@@ -27,7 +27,8 @@ namespace AdventCalender.Data
                 UserName = "seller@test.com",
                 Email = "seller@test.com",
                 StoreName = "Магазин Чудес",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                CalendarDaysCount = 24
             };
             if ((await userManager.CreateAsync(seller, "Pass123!")).Succeeded)
             {

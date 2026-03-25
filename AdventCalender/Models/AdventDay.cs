@@ -7,18 +7,22 @@ namespace AdventCalender.Models
     {
         public int Id { get; set; }
 
+        [Required]
         public int DayNumber { get; set; }
 
+        [Required(ErrorMessage = "Введите название подарка")]
         public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
 
-        [Column(TypeName = "decimal(18,2)")] 
+        public string? Description { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         public string? ImageUrl { get; set; }
         public bool IsPaid { get; set; } = false;
 
         public string SellerId { get; set; } = string.Empty;
-        public virtual ApplicationUser Seller { get; set; } = null!;
+
+        public virtual ApplicationUser? Seller { get; set; }
     }
 }

@@ -2,61 +2,52 @@
 
 @{
     ViewData["Title"] = Model.StoreName;
-
-    int fakeToday = 3; 
+    int totalDays = Model.CalendarDaysCount > 0 ? Model.CalendarDaysCount : 24;
+    
+    int currentDay = DateTime.Now.Day;
+    bool isDecember = DateTime.Now.Month == 12;
 }
 
 <div class="container py-4">
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Message"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-danger">🎄 @Model.StoreName</h1>
-        <p class="lead text-muted">Найдите подарок сегодняшнего дня!</p>
+        <p class="lead text-muted">@Model.Description</p>
     </div>
 
-    <div class="row g-4">
-        @for (int i = 1; i <= 24; i++)
+    <div class="row g-3">
+        @for (int i = 1; i <= totalDays; i++) 
         {
             var dayData = Model.AdventDays.FirstOrDefault(d => d.DayNumber == i);
-            bool isLocked = i > fakeToday; 
+            bool isLocked = isDecember && i > currentDay; 
 
             <div class="col-6 col-md-4 col-lg-2">
                 @if (isLocked)
                 {
-                    <div class="card h-100 border-0 shadow-sm locked-card bg-gradient">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
-                            <span class="display-6 fw-bold text-white opacity-50">@i</span>
-                            <div class="mt-2 text-white opacity-75">
-                                <span style="font-size: 2rem;">🎁</span>
+                    <div class="card h-100 border-0 shadow-sm bg-light opacity-75">
+                        <div class="card-body text-center p-4">
+                            <span class="h2 fw-bold text-muted">@i</span>
+                            <div class="mt-2 small text-uppercase">🔒
+                                <a asp-controller="Calendar" asp-action="DayDetails" asp-route-id="@dayData.Id" 
+                                 class="btn btn-sm btn-outline-danger rounded-pill px-3">Открыть</a>
                             </div>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <div class="card h-100 border-0 shadow-sm opened-card">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
-                            <span class="display-6 fw-bold text-danger">@i</span>
-                            
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <span class="h2 fw-bold text-danger">@i</span>
                             @if (dayData != null)
                             {
-                                <small class="text-muted mb-2 text-center" style="font-size: 0.75rem;">
-                                    @dayData.Title
-                                </small>
-                                <a asp-action="DayDetails" asp-route-id="@dayData.Id" 
-                                   class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm mt-auto">
-                                    Открыть
-                                </a>
+                                <div class="mt-2">
+                                    <a asp-action="DayDetails" asp-route-id="@dayData.Id" 
+                                       class="btn btn-sm btn-outline-danger rounded-pill px-3">Открыть</a>
+                                </div>
                             }
                             else
                             {
-                                <span class="text-muted small mt-auto">Пусто</span>
+                                <div class="mt-2 small text-muted">Скоро...</div>
                             }
                         </div>
                     </div>

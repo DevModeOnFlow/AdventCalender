@@ -9,6 +9,8 @@ namespace AdventCalender.Models
         public string? Description { get; set; }
         public string? LogoUrl { get; set; }
 
+        public int CalendarDaysCount { get; set; } = 24;
+
         public virtual ICollection<AdventDay> AdventDays { get; set; } = new List<AdventDay>();
     }
 }

@@ -1,4 +1,6 @@
-﻿@model AdventCalender.Models.AdventDay
+﻿@using System.Globalization
+
+@model AdventCalender.Models.AdventDay
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -12,7 +14,7 @@
                         <div class="card-body">
                             <h5 class="card-title">День @Model.DayNumber: @Model.Title</h5>
                             <p class="card-text">@Model.Description</p>
-                            <h4 class="text-primary">@Model.Price.ToString("C")</h4>
+                            <h4 class="text-primary">@Model.Price.ToString("C", CultureInfo.GetCultureInfo("en-US"))</h4>
                             
                             <hr />
                             
