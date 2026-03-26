@@ -1,6 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Конфиденциальность";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <div class="text-center mb-4">
+                    <span class="display-4">🛡️</span>
+                    <h1 class="fw-bold mt-2">Политика конфиденциальности</h1>
+                </div>
+
+                <div class="card-body p-0">
+                    <h5 class="fw-bold text-danger">1. Какие данные мы собираем</h5>
+                    <p class="text-muted">
+                        Для работы маркетплейса <strong>AdventCalender</strong> мы собираем минимальный набор данных: 
+                        ваш Email (для входа), Никнейм (для отображения в профиле) и название магазина (для продавцов).
+                    </p>
+
+                    <h5 class="fw-bold text-danger mt-4">2. Использование файлов Cookie</h5>
+                    <p class="text-muted">
+                        Мы используем технические файлы Cookie исключительно для того, чтобы вы оставались авторизованными в своем аккаунте. 
+                        Мы не передаем ваши данные рекламным сервисам.
+                    </p>
+
+                    <h5 class="fw-bold text-danger mt-4">3. Безопасность данных</h5>
+                    <p class="text-muted">
+                        Ваши пароли хранятся в зашифрованном виде (хэш) с использованием стандартов безопасности 
+                        ASP.NET Core Identity. Никто, включая администрацию сайта, не может увидеть ваш реальный пароль.
+                    </p>
+
+                    <h5 class="fw-bold text-danger mt-4">4. Ответственность продавцов</h5>
+                    <p class="text-muted">
+                        Продавцы несут ответственность за контент, который они размещают в своих адвент-календарях. 
+                        Запрещено размещение материалов, нарушающих законодательство.
+                    </p>
+
+                    <hr class="my-4 opacity-25">
+                    
+                    <div class="text-center">
+                        <p class="small text-muted mb-0">Есть вопросы?</p>
+                        <a href="mailto:support@adventcalender.com" class="text-decoration-none fw-bold">support@adventcalender.com</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .rounded-4 { border-radius: 1.5rem; }
+    p { line-height: 1.6; }
+</style>

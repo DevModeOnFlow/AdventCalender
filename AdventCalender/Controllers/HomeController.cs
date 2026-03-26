@@ -31,5 +31,10 @@ namespace AdventCalender.Controllers
             var sellers = await sellersQuery.ToListAsync();
             return View(sellers);
         }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
     }
 }
