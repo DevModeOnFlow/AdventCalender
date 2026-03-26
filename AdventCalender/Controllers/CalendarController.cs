@@ -39,20 +39,28 @@ namespace AdventCalender.Controllers
             DateTime targetDate = seller.CalendarStartDate.Date.AddDays(day.DayNumber - 1);
 
             if (now.Date < targetDate)
+            {
+                TempData["Message"] = $"Терпение! Этот подарок откроется только {targetDate:dd.MM.yyyy}";
                 return RedirectToAction("Index", new { sellerId = seller.Id });
+            }
 
             if (now.Date == targetDate)
             {
-                if (now.TimeOfDay < day.StartTime || now.TimeOfDay > day.EndTime)
+                if (now.TimeOfDay < day.StartTime)
                 {
-                    TempData["Message"] = "Акция для этого дня завершена или еще не началась!";
+                    TempData["Message"] = $"Слишком рано! Заходите в {day.StartTime:hh\\:mm}";
+                    return RedirectToAction("Index", new { sellerId = seller.Id });
+                }
+                if (now.TimeOfDay > day.EndTime)
+                {
+                    TempData["Message"] = "Увы, время этого предложения на сегодня истекло!";
                     return RedirectToAction("Index", new { sellerId = seller.Id });
                 }
             }
 
             if (now.Date > targetDate)
             {
-                TempData["Message"] = "Увы, время этого предложения истекло!";
+                TempData["Message"] = "Акция для этого дня уже завершена!";
                 return RedirectToAction("Index", new { sellerId = seller.Id });
             }
 
