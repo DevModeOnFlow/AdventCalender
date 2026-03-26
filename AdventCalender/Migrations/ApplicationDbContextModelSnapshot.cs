@@ -77,6 +77,9 @@ namespace AdventCalender.Migrations
                     b.Property<int>("CalendarDaysCount")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("CalendarStartDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -96,9 +99,6 @@ namespace AdventCalender.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LogoUrl")
-                        .HasColumnType("text");
 
                     b.Property<string>("Nickname")
                         .HasColumnType("text");

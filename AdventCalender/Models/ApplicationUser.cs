@@ -7,9 +7,9 @@ namespace AdventCalender.Models
         public string? Nickname { get; set; }
         public string? StoreName { get; set; }
         public string? Description { get; set; }
-        public string? LogoUrl { get; set; }
 
         public int CalendarDaysCount { get; set; } = 24;
+        public DateTime CalendarStartDate { get; set; } = DateTime.UtcNow.Date;
 
         public virtual ICollection<AdventDay> AdventDays { get; set; } = new List<AdventDay>();
     }

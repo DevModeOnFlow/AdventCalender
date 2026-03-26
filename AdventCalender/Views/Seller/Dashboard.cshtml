@@ -81,6 +81,12 @@
                                 }
                             </select>
                         </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold">Дата запуска</label>
+                            <input type="date" name="calendarStartDate" class="form-control rounded-3" 
+                                   value="@Model.CalendarStartDate.ToString("yyyy-MM-dd")" required>
+                        </div>
+
                         <div class="col-12 text-end mt-4">
                             <button type="button" class="btn btn-link text-muted me-2 text-decoration-none" data-bs-toggle="collapse" data-bs-target="#editSettings">Отмена</button>
                             <button type="submit" class="btn btn-primary px-5 rounded-pill shadow">Сохранить изменения</button>

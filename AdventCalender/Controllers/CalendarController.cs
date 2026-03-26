@@ -27,20 +27,33 @@ namespace AdventCalender.Controllers
 
         public async Task<IActionResult> DayDetails(int id)
         {
-            var day = await _context.AdventDays.Include(d => d.Seller).FirstOrDefaultAsync(d => d.Id == id);
+            var day = await _context.AdventDays
+                .Include(d => d.Seller)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
             if (day == null) return NotFound();
 
-            var now = DateTime.Now;
-            var currentTime = now.TimeOfDay;
+            var seller = day.Seller;
+            DateTime now = DateTime.Now;
 
-            bool isTooEarly = currentTime < day.StartTime;
-            bool isTooLate = currentTime > day.EndTime;
+            DateTime targetDate = seller.CalendarStartDate.Date.AddDays(day.DayNumber - 1);
 
+            if (now.Date < targetDate)
+                return RedirectToAction("Index", new { sellerId = seller.Id });
 
-            if (isTooEarly || isTooLate)
+            if (now.Date == targetDate)
             {
-                TempData["Message"] = "Извините, это предложение сейчас недоступно!";
-                return RedirectToAction("Index", new { sellerId = day.SellerId });
+                if (now.TimeOfDay < day.StartTime || now.TimeOfDay > day.EndTime)
+                {
+                    TempData["Message"] = "Акция для этого дня завершена или еще не началась!";
+                    return RedirectToAction("Index", new { sellerId = seller.Id });
+                }
+            }
+
+            if (now.Date > targetDate)
+            {
+                TempData["Message"] = "Увы, время этого предложения истекло!";
+                return RedirectToAction("Index", new { sellerId = seller.Id });
             }
 
             return View(day);

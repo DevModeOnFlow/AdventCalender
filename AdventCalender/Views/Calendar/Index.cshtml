@@ -3,102 +3,88 @@
 @{
     ViewData["Title"] = Model.StoreName;
 
-    int totalDays = Model.CalendarDaysCount > 0 ? Model.CalendarDaysCount : 24;
-
+    // Текущие дата и время
     DateTime now = DateTime.Now;
-    int currentDay = now.Day;
+    DateTime today = now.Date;
     TimeSpan currentTime = now.TimeOfDay;
-    bool isDecember = now.Month == 12;
 
-    bool isDemoMode = true; 
-    if (isDemoMode) { currentDay = 5; isDecember = true; } 
+    // Дата старта этого конкретного продавца
+    DateTime startDate = Model.CalendarStartDate.Date;
+    int totalDays = Model.CalendarDaysCount;
 }
 
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-danger mb-2">🎄 @Model.StoreName</h1>
-        <p class="lead text-muted mx-auto" style="max-width: 600px;">@Model.Description</p>
-        @if (isDemoMode)
-        {
-            <span class="badge bg-warning text-dark rounded-pill shadow-sm px-3">Демо-режим: 5 Декабря</span>
-        }
+        <p class="text-muted">Дата старта: <strong>@startDate.ToString("dd MMMM yyyy")</strong></p>
     </div>
 
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-4">
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
         @for (int i = 1; i <= totalDays; i++)
         {
             var dayData = Model.AdventDays.FirstOrDefault(d => d.DayNumber == i);
             
-            bool isFuture = isDecember && i > currentDay;
-            bool isPast = isDecember && i < currentDay;
-            bool isToday = isDecember && i == currentDay;
+            // Вычисляем дату, когда должен открыться этот "День i"
+            // День 1 открывается в дату старта, День 2 - через 1 день и т.д.
+            DateTime targetDate = startDate.AddDays(i - 1);
+
+            // Статусы
+            bool isFuture = today < targetDate;
+            bool isPast = today > targetDate;
+            bool isToday = today == targetDate;
 
             bool isEarly = dayData != null && currentTime < dayData.StartTime;
             bool isLate = dayData != null && currentTime > dayData.EndTime;
             bool isActive = isToday && !isEarly && !isLate;
 
             <div class="col">
-                @if (isFuture || isPast || (isToday && isLate))
+                @if (isFuture)
                 {
+                    @* БУДУЩЕЕ: Закрыто, пишем дату открытия *@
                     <div class="card h-100 border-0 shadow-sm locked-card">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
-                            <div class="lock-icon mb-2">
-                                @(isPast || isLate ? "⌛" : "🔒")
-                            </div>
-                            <span class="display-6 fw-bold opacity-25">@i</span>
-                            <div class="small mt-2 text-uppercase fw-bold opacity-50" style="font-size: 0.6rem; letter-spacing: 1px;">
-                                @(isPast || isLate ? "Пропущено" : "Закрыто")
-                            </div>
+                        <div class="card-body text-center p-4">
+                            <span class="h1 fw-bold opacity-25">@i</span>
+                            <div class="small fw-bold opacity-50 mt-2">@targetDate.ToString("dd.MM")</div>
+                            <div class="mt-1">🔒</div>
+                        </div>
+                    </div>
+                }
+                else if (isPast || (isToday && isLate))
+                {
+                    @* ПРОШЛОЕ: Время вышло *@
+                    <div class="card h-100 border-0 shadow-sm bg-light opacity-75">
+                        <div class="card-body text-center p-4">
+                            <span class="h1 fw-bold text-muted">@i</span>
+                            <div class="badge bg-secondary rounded-pill">⌛ Истекло</div>
                         </div>
                     </div>
                 }
                 else if (isToday && isEarly && dayData != null)
                 {
-                    <div class="card h-100 border-0 shadow-sm today-card bg-light">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 160px;">
-                            <span class="h4 fw-bold text-primary mb-1">День @i</span>
-                            <div class="small fw-bold text-uppercase text-muted" style="font-size: 0.65rem;">Откроется в @dayData.StartTime.ToString(@"hh\:mm")</div>
-                            
-                            <div class="mt-2 fw-bold text-primary timer-display" data-start="@dayData.StartTime.ToString()">
-                                --:--:--
-                            </div>
+                    @* СЕГОДНЯ, НО РАНО: Таймер *@
+                    <div class="card h-100 border-0 shadow-sm border-primary" style="border-width: 2px !important;">
+                        <div class="card-body text-center p-4 bg-primary bg-opacity-10">
+                            <span class="h2 fw-bold text-primary">День @i</span>
+                            <div class="small fw-bold text-uppercase mt-2">Ждите:</div>
+                            <div class="fw-bold timer-display" data-start="@dayData.StartTime.ToString()">--:--</div>
                         </div>
-                        <div class="card-footer bg-warning text-dark text-center py-1 border-0 rounded-bottom-4 fw-bold" style="font-size: 0.7rem;">
-                            СКОРО
+                    </div>
+                }
+                else if (isActive && dayData != null)
+                {
+                    @* АКТИВНО СЕЙЧАС *@
+                    <div class="card h-100 border-0 shadowOpened shadow opened-card border-success" style="border-width: 2px !important;">
+                        <div class="card-body text-center p-4">
+                            <span class="display-6 fw-bold text-success">@i</span>
+                            <div class="small fw-bold text-truncate mb-2">@dayData.Title</div>
+                            <a asp-action="DayDetails" asp-route-id="@dayData.Id" class="btn btn-success btn-sm rounded-pill w-100 shadow-sm">ОТКРЫТЬ</a>
+                            <div class="mt-2 text-danger fw-bold" style="font-size: 0.65rem;">До @dayData.EndTime.ToString(@"hh\:mm")</div>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <div class="card h-100 border-0 shadow-sm opened-card @(isToday ? "today-card" : "")">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 160px;">
-                            <span class="display-6 fw-bold @(isToday ? "text-primary" : "text-danger")">@i</span>
-                            
-                            @if (dayData != null)
-                            {
-                                <div class="mt-2 text-center">
-                                    <div class="small fw-bold text-truncate mb-2" style="max-width: 120px;">@dayData.Title</div>
-                                    <a asp-controller="Calendar" asp-action="DayDetails" asp-route-id="@dayData.Id" 
-                                       class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm hover-grow">
-                                        Открыть
-                                    </a>
-                                    @if(isToday) {
-                                        <div class="text-danger mt-2 fw-bold" style="font-size: 0.6rem;">До @dayData.EndTime.ToString(@"hh\:mm")</div>
-                                    }
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="mt-2 small text-muted italic">Пусто</div>
-                            }
-                        </div>
-                        @if (isToday)
-                        {
-                            <div class="card-footer bg-primary text-white text-center py-1 border-0 rounded-bottom-4" style="font-size: 0.7rem;">
-                                СЕГОДНЯ
-                            </div>
-                        }
-                    </div>
+                    <div class="card h-100 border-0 shadow-sm bg-light"><div class="card-body text-center">@i<br/>Пусто</div></div>
                 }
             </div>
         }
