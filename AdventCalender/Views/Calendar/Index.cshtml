@@ -3,32 +3,53 @@
 @{
     ViewData["Title"] = Model.StoreName;
 
-    // Текущие дата и время
+    DateTime startDate = Model.CalendarStartDate.Date;
+    DateTime endDate = Model.CalendarEndDate.Date;
+    
+    int totalDays = (endDate - startDate).Days + 1;
+    if (totalDays < 1) totalDays = 1;
+
     DateTime now = DateTime.Now;
     DateTime today = now.Date;
     TimeSpan currentTime = now.TimeOfDay;
 
-    // Дата старта этого конкретного продавца
-    DateTime startDate = Model.CalendarStartDate.Date;
-    int totalDays = Model.CalendarDaysCount;
+    bool isDemoMode = true; 
+    if (isDemoMode) 
+    { 
+        today = startDate.AddDays(1); 
+        currentTime = new TimeSpan(14, 0, 0); 
+    }
 }
 
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-danger mb-2">🎄 @Model.StoreName</h1>
-        <p class="text-muted">Дата старта: <strong>@startDate.ToString("dd MMMM yyyy")</strong></p>
+        <p class="lead text-muted mx-auto mb-3" style="max-width: 600px;">@Model.Description</p>
+        
+        <div class="d-inline-block bg-light px-4 py-2 rounded-pill shadow-sm border">
+            <span class="fw-bold text-dark">📅 Период: </span>
+            <span class="text-danger">@startDate.ToString("dd.MM")</span> 
+            <span class="text-muted mx-2">—</span> 
+            <span class="text-danger">@endDate.ToString("dd.MM.yyyy")</span>
+        </div>
+
+        @if (isDemoMode)
+        {
+            <div class="mt-3">
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                    🛠 Режим демо: Эмуляция дня @( (today - startDate).Days + 1 )
+                </span>
+            </div>
+        }
     </div>
 
-    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-4">
         @for (int i = 1; i <= totalDays; i++)
         {
             var dayData = Model.AdventDays.FirstOrDefault(d => d.DayNumber == i);
             
-            // Вычисляем дату, когда должен открыться этот "День i"
-            // День 1 открывается в дату старта, День 2 - через 1 день и т.д.
             DateTime targetDate = startDate.AddDays(i - 1);
 
-            // Статусы
             bool isFuture = today < targetDate;
             bool isPast = today > targetDate;
             bool isToday = today == targetDate;
@@ -40,51 +61,68 @@
             <div class="col">
                 @if (isFuture)
                 {
-                    @* БУДУЩЕЕ: Закрыто, пишем дату открытия *@
                     <div class="card h-100 border-0 shadow-sm locked-card">
-                        <div class="card-body text-center p-4">
-                            <span class="h1 fw-bold opacity-25">@i</span>
-                            <div class="small fw-bold opacity-50 mt-2">@targetDate.ToString("dd.MM")</div>
-                            <div class="mt-1">🔒</div>
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 180px;">
+                            <div class="lock-icon mb-2">🔒</div>
+                            <span class="display-6 fw-bold opacity-25">@i</span>
+                            <div class="small mt-2 fw-bold text-uppercase opacity-50" style="font-size: 0.65rem; letter-spacing: 1px;">
+                                Откроется @targetDate.ToString("dd.MM")
+                            </div>
                         </div>
                     </div>
                 }
                 else if (isPast || (isToday && isLate))
                 {
-                    @* ПРОШЛОЕ: Время вышло *@
-                    <div class="card h-100 border-0 shadow-sm bg-light opacity-75">
-                        <div class="card-body text-center p-4">
-                            <span class="h1 fw-bold text-muted">@i</span>
-                            <div class="badge bg-secondary rounded-pill">⌛ Истекло</div>
+                    <div class="card h-100 border-0 shadow-sm bg-light opacity-75 grayscale-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 180px;">
+                            <span class="display-6 fw-bold text-muted mb-2">@i</span>
+                            <div class="badge bg-secondary rounded-pill text-uppercase" style="font-size: 0.6rem;">Завершено ⌛</div>
                         </div>
                     </div>
                 }
                 else if (isToday && isEarly && dayData != null)
                 {
-                    @* СЕГОДНЯ, НО РАНО: Таймер *@
-                    <div class="card h-100 border-0 shadow-sm border-primary" style="border-width: 2px !important;">
-                        <div class="card-body text-center p-4 bg-primary bg-opacity-10">
-                            <span class="h2 fw-bold text-primary">День @i</span>
-                            <div class="small fw-bold text-uppercase mt-2">Ждите:</div>
-                            <div class="fw-bold timer-display" data-start="@dayData.StartTime.ToString()">--:--</div>
+                    <div class="card h-100 border-2 border-primary shadow-sm today-card bg-white" style="border-style: dashed !important;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 180px;">
+                            <span class="h1 fw-bold text-primary mb-1">@i</span>
+                            <div class="small fw-bold text-muted text-uppercase mb-2" style="font-size: 0.6rem;">Ждем открытия:</div>
+                            
+                            <div class="timer-display fw-bold text-primary h5 mb-0" data-start="@dayData.StartTime.ToString()">
+                                00:00:00
+                            </div>
+                            <div class="text-muted x-small mt-1" style="font-size: 0.7rem;">в @dayData.StartTime.ToString(@"hh\:mm")</div>
                         </div>
                     </div>
                 }
                 else if (isActive && dayData != null)
                 {
-                    @* АКТИВНО СЕЙЧАС *@
-                    <div class="card h-100 border-0 shadowOpened shadow opened-card border-success" style="border-width: 2px !important;">
-                        <div class="card-body text-center p-4">
-                            <span class="display-6 fw-bold text-success">@i</span>
-                            <div class="small fw-bold text-truncate mb-2">@dayData.Title</div>
-                            <a asp-action="DayDetails" asp-route-id="@dayData.Id" class="btn btn-success btn-sm rounded-pill w-100 shadow-sm">ОТКРЫТЬ</a>
-                            <div class="mt-2 text-danger fw-bold" style="font-size: 0.65rem;">До @dayData.EndTime.ToString(@"hh\:mm")</div>
+                    <div class="card h-100 border-0 shadow-lg opened-card today-active">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 180px;">
+                            <span class="display-5 fw-bold text-danger mb-2">@i</span>
+                            <div class="small fw-bold text-truncate w-100 mb-2">@dayData.Title</div>
+                            
+                            <a asp-controller="Calendar" asp-action="DayDetails" asp-route-id="@dayData.Id" 
+                               class="btn btn-danger btn-sm rounded-pill w-100 shadow-sm fw-bold hover-pulse">
+                                ЗАБРАТЬ 🎁
+                            </a>
+                            
+                            <div class="mt-3 text-danger fw-bold" style="font-size: 0.65rem;">
+                                До @dayData.EndTime.ToString(@"hh\:mm")
+                            </div>
+                        </div>
+                        <div class="card-footer bg-danger text-white text-center py-1 border-0" style="font-size: 0.65rem;">
+                            ДОСТУПНО СЕЙЧАС
                         </div>
                     </div>
                 }
                 else
                 {
-                    <div class="card h-100 border-0 shadow-sm bg-light"><div class="card-body text-center">@i<br/>Пусто</div></div>
+                    <div class="card h-100 border-0 shadow-sm bg-light">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 180px;">
+                            <span class="h2 fw-bold text-muted opacity-25">@i</span>
+                            <div class="text-muted small italic">Пусто</div>
+                        </div>
+                    </div>
                 }
             </div>
         }
@@ -104,12 +142,14 @@
             const diff = target - now;
 
             if (diff > 0) {
-                const h = Math.floor(diff / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                el.innerText = `${h}ч ${m}м ${s}с`;
+                const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                el.innerText = `${h}:${m}:${s}`;
             } else {
-                location.reload(); 
+                if (diff > -2000) { 
+                    location.reload();
+                }
             }
         });
     }
@@ -119,19 +159,14 @@
 </script>
 
 <style>
-    body { background-color: #fdfdfd; }
+    body { background-color: #f8f9fa; }
 
     .locked-card {
-        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
         border-radius: 20px;
         color: #adb5bd;
-        cursor: not-allowed;
     }
-    .lock-icon {
-        font-size: 1.5rem;
-        filter: grayscale(1);
-        opacity: 0.5;
-    }
+    .lock-icon { font-size: 1.5rem; opacity: 0.3; }
 
     .opened-card {
         background: #ffffff;
@@ -139,33 +174,35 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .opened-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(220, 53, 69, 0.15) !important;
     }
 
-    .today-card {
-        border: 2px solid #0d6efd !important;
-        background-color: #f0f7ff;
-    }
-
-    .hover-grow {
-        transition: transform 0.2s;
-    }
-    .hover-grow:hover {
-        transform: scale(1.1);
-    }
-
-    .display-6 {
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    .today-active {
+        border: 2px solid #dc3545 !important;
     }
     
-    .rounded-bottom-4 {
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
+    .grayscale-card {
+        filter: grayscale(1);
+    }
+
+    .hover-pulse:hover {
+        animation: pulse-red 1s infinite;
+    }
+
+    @@keyframes pulse-red {
+        0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
+
+    .display-6, .display-5 {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        line-height: 1;
     }
 
     .timer-display {
-        font-family: monospace;
-        font-size: 1.1rem;
+        font-family: 'Courier New', Courier, monospace;
+        letter-spacing: 1px;
     }
 </style>

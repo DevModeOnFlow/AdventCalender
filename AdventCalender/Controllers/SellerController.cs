@@ -37,15 +37,22 @@ namespace AdventCalender.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStore(string storeName, string description, int calendarDaysCount, DateTime calendarStartDate)
+        public async Task<IActionResult> UpdateStore(string storeName, string description, DateTime calendarStartDate, DateTime calendarEndDate)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
+                if (calendarEndDate < calendarStartDate)
+                {
+                    TempData["Error"] = "Дата окончания не может быть раньше даты начала!";
+                    return RedirectToAction(nameof(Dashboard));
+                }
+
                 user.StoreName = storeName;
                 user.Description = description;
-                user.CalendarDaysCount = calendarDaysCount;
+
                 user.CalendarStartDate = DateTime.SpecifyKind(calendarStartDate.Date, DateTimeKind.Utc);
+                user.CalendarEndDate = DateTime.SpecifyKind(calendarEndDate.Date, DateTimeKind.Utc);
 
                 await _userManager.UpdateAsync(user);
                 TempData["Success"] = "Настройки магазина обновлены!";
