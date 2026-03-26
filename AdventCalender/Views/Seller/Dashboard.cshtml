@@ -11,6 +11,10 @@
 
     var filledDaysCount = Model.AdventDays.Count(d => d.DayNumber <= totalDays);
     int progressPercent = (int)((filledDaysCount / (double)totalDays) * 100);
+
+    bool isComplete = progressPercent == 100;
+    string statusColor = isComplete ? "success" : "danger"; 
+    string statusIcon = isComplete ? "🚀" : "🏪";
 }
 
 <div class="container py-4">
@@ -40,10 +44,10 @@
     <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
         <div class="card-body p-4 p-md-5 bg-white">
             <div class="row align-items-center">
-                <div class="col-lg-7 mb-4 mb-lg-0">
+               <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="bg-danger bg-opacity-10 p-3 rounded-4 me-3">
-                            <span class="h2 mb-0">🏪</span>
+                        <div class="bg-@statusColor bg-opacity-10 p-3 rounded-4 me-3">
+                            <span class="h2 mb-0">@statusIcon</span>
                         </div>
                         <div>
                             <h2 class="fw-bold mb-0">@Model.StoreName</h2>
@@ -51,14 +55,15 @@
                         </div>
                     </div>
                     <p class="text-muted mb-4 pe-lg-5 fs-5">
-                        @(string.IsNullOrEmpty(Model.Description) ? "Ваш магазин пока без описания. Расскажите о себе!" : Model.Description)
+                        @(string.IsNullOrEmpty(Model.Description) ? "Ваш магазин пока без описания." : Model.Description)
                     </p>
                     <div class="d-flex gap-2">
                         <button class="btn btn-dark rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#editSettings">
-                            ⚙️ Настройки периода и профиля
+                            ⚙️ Настройки
                         </button>
-                        <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@Model.Id" target="_blank" class="btn btn-outline-danger rounded-pill px-4 shadow-sm">
-                            🔗 Просмотр витрины
+        
+                        <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@Model.Id" target="_blank" 
+                           class="btn btn- rounded-pill px-4 shadow-sm fw">@("Просмотр витрины")
                         </a>
                     </div>
                 </div>
@@ -67,19 +72,22 @@
                     <div class="bg-light p-4 rounded-4 border border-white border-2 shadow-sm">
                         <div class="d-flex justify-content-between align-items-end mb-2">
                             <div>
-                                <h6 class="text-uppercase fw-bold text-muted small mb-1">Заполнено ячеек</h6>
-                                <span class="h3 fw-bold mb-0 text-danger">@filledDaysCount <span class="text-muted h5 fw-normal">/ @totalDays</span></span>
+                                <h6 class="text-uppercase fw-bold text-muted small mb-1">Статус заполнения</h6>
+                                <span class="h3 fw-bold mb-0 text-@statusColor">@filledDaysCount <span class="text-muted h5 fw-normal">/ @totalDays</span></span>
                             </div>
-                            <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm">@progressPercent%</span>
+                            <span class="badge bg-@statusColor rounded-pill px-3 py-2 shadow-sm">@progressPercent%</span>
                         </div>
+        
                         <div class="progress rounded-pill bg-white mb-2" style="height: 14px;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
+                            <div class="progress-bar progress-bar-striped @(isComplete ? "" : "progress-bar-animated") bg-@statusColor" 
                                  role="progressbar" style="width: @progressPercent%"></div>
                         </div>
-                        <div class="small text-muted mt-2 d-flex justify-content-between">
-                            <span>Начало: @startDate.ToString("dd.MM.yyyy")</span>
-                            <span>Конец: @endDate.ToString("dd.MM.yyyy")</span>
-                        </div>
+        
+                        @if(isComplete) {
+                            <small class="text-success fw-bold mt-2 d-block">✨ Идеально! Ваш календарь полностью укомплектован.</small>
+                        } else {
+                            <small class="text-muted fw-light mt-2 d-block">Заполните еще @(totalDays - filledDaysCount) ячеек до полной готовности.</small>
+                        }
                     </div>
                 </div>
             </div>
