@@ -76,3 +76,7 @@
         field.classList.toggle('d-none', !show);
     }
 </script>
+
+    @section Scripts {
+        @await Html.PartialAsync("_ValidationScriptsPartial")
+    }
