@@ -28,9 +28,31 @@
 
                             @if (Model.IsPaid)
                             {
-                                <div class="alert alert-success">
-                                    Товар уже забран!
-                                </div>
+                                 @if (Model.IsPaid && User.Identity?.IsAuthenticated == true)
+                                {
+                                    <div class="alert alert-success">
+                                        Товар уже недоступен!
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (User.Identity?.IsAuthenticated == true)
+                                    {
+                                        <form asp-controller="Order" asp-action="CreateOrder" method="post">
+                                            <input type="hidden" name="adventDayId" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
+                                                @(Model.Price == 0 ? "Бесплатно" : "Оплатить")
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("DayDetails", "Calendar", new { id = Model.Id }) })"
+                                           class="btn btn-warning btn-lg w-100 fw-bold">
+                                            @(Model.Price == 0 ? "Бесплатно" : "Оплатить")
+                                        </a>
+                                    }
+                                }
                             }
                             else
                             {
