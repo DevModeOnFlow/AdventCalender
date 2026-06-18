@@ -29,7 +29,7 @@
                         {
                             var user = await UserManager.GetUserAsync(User);
                             var nickname = user?.Nickname ?? User.Identity.Name;
-
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center fw-bold text-dark" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
                 
