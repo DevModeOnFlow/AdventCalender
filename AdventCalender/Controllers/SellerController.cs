@@ -107,5 +107,27 @@ namespace AdventCalender.Controllers
             }
             return RedirectToAction(nameof(Dashboard));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetDay(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var day = await _context.AdventDays.FirstOrDefaultAsync(d => d.Id == id && d.SellerId == userId);
+
+            if (day != null && day.IsPaid)
+            {
+                day.IsPaid = false;
+
+                var orders = _context.Orders.Where(o => o.AdventDayId == id);
+                _context.Orders.RemoveRange(orders);
+
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"Статус ячейки {day.DayNumber} успешно сброшен!";
+            }
+
+            return RedirectToAction(nameof(Dashboard));
+        }
     }
 }

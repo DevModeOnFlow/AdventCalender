@@ -166,8 +166,19 @@
                             <div class="mt-auto d-flex justify-content-center gap-2">
                                 <a asp-action="EditDay" asp-route-id="@dayData.Id" 
                                    class="btn btn-sm btn-white border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center" 
-                                   style="width: 34px; height: 34px;" title="Изменить">✏️</a>
-                                
+                                   style="width: 34px; height: 34px;" title="Изменить">✏</a>
+
+                                @if (dayData.IsPaid)
+                                {
+                                    <form asp-action="ResetDay" asp-route-id="@dayData.Id" method="post"
+                                          onsubmit="return confirm('Вернуть товар на витрину? История его покупок будет удалена.')">
+                                        <button type="submit" class="btn btn-sm btn-white border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center"
+                                                style="width: 34px; height: 34px; background-color: #fff3cd;" title="Сбросить статус">
+                                            🔄
+                                        </button>
+                                    </form>
+                                }
+
                                 <form asp-action="DeleteDay" asp-route-id="@dayData.Id" method="post" 
                                       onsubmit="return confirm('Удалить товар из ячейки @i (@currentCellDate.ToShortDateString())?')">
                                     <button type="submit" class="btn btn-sm btn-white border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center text-danger" 
