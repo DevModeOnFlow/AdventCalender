@@ -5,7 +5,7 @@
         <div class="col-md-6">
             <div class="card shadow border-0 rounded-4">
                 <div class="card-body p-4">
-                    <h3 class="fw-bold mb-4 text-center">⚙️ Настройка дня @Model.DayNumber</h3>
+                    <h3 class="fw-bold mb-4 text-center">Настройка дня @Model.DayNumber</h3>
                     
                     <form asp-action="SaveDay" method="post">
                         <input type="hidden" asp-for="Id" />
@@ -16,7 +16,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Название подарка</label>
-                            <input asp-for="Title" class="form-control" placeholder="Напр: Набор конфет" />
+                            <input asp-for="Title" class="form-control" />
                             <span asp-validation-for="Title" class="text-danger small"></span>
                         </div>
 

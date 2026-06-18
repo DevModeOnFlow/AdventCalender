@@ -60,7 +60,7 @@
                     </p>
                     <div class="d-flex gap-2">
                         <button class="btn btn-dark rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#editSettings">
-                            ⚙️ Настройки
+                            Настройки
                         </button>
         
                         <a asp-controller="Calendar" asp-action="Index" asp-route-sellerId="@Model.Id" target="_blank" 
@@ -107,14 +107,14 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold text-uppercase text-danger">📅 Дата запуска</label>
+                            <label class="form-label small fw-bold text-uppercase text-danger">Дата запуска</label>
                             <input type="date" name="calendarStartDate" class="form-control rounded-3 py-2 shadow-sm" 
                                    value="@Model.CalendarStartDate.ToString("yyyy-MM-dd")" required>
                             <div class="form-text small">День, когда откроется первая ячейка.</div>
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold text-uppercase text-danger">🏁 Дата окончания</label>
+                            <label class="form-label small fw-bold text-uppercase text-danger">Дата окончания</label>
                             <input type="date" name="calendarEndDate" class="form-control rounded-3 py-2 shadow-sm" 
                                    value="@Model.CalendarEndDate.ToString("yyyy-MM-dd")" required>
                             <div class="form-text small">Последний день вашей акции.</div>
@@ -151,8 +151,14 @@
                         @if (dayData != null)
                         {
                             <div class="small fw-bold text-truncate mb-1 px-1">@dayData.Title</div>
-                            <div class="text-danger fw-bold small mb-3">@dayData.Price.ToString("C", CultureInfo.GetCultureInfo("en-US"))</div>
-                            
+                            @if (dayData.Price == 0)
+                            {
+                                <div class="text-success fw-bold small mb-3">Бесплатно</div>
+                            }
+                            else
+                            {
+                                <div class="text-danger fw-bold small mb-3">@dayData.Price.ToString("C", CultureInfo.GetCultureInfo("en-US"))</div>
+                            }
                             <div class="small text-muted mb-3" style="font-size: 0.65rem;">
                                 🕒 @dayData.StartTime.ToString(@"hh\:mm") - @dayData.EndTime.ToString(@"hh\:mm")
                             </div>

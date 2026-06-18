@@ -21,23 +21,23 @@
      @if (TempData["Message"] != null)
         {
             <div class="alert alert-warning alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
-                ⚠️ @TempData["Message"]
+                @TempData["Message"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
      <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-danger mb-2">🎄 @Model.StoreName</h1>
+        <h1 class="display-4 fw-bold text-danger mb-2">@Model.StoreName</h1>
         <p class="lead text-muted mx-auto mb-4" style="max-width: 600px;">@Model.Description</p>
         
         <div class="d-inline-block bg-white px-4 py-2 rounded-pill shadow-sm border border-danger border-opacity-25">
-            <span class="fw-bold">📅 Период акции: </span>
+            <span class="fw-bold">Период акции: </span>
             <span class="text-danger">@startDate.ToString("dd.MM")</span> — <span class="text-danger">@endDate.ToString("dd.MM.yyyy")</span>
         </div>
 
         @if (hasNotStarted)
         {
             <div class="mt-4 alert alert-info d-inline-block rounded-pill px-4">
-                🚀 Марафон еще не начался! Ждем вас <strong>@startDate.ToString("dd MMMM")</strong>
+                Марафон еще не начался! Ждем вас <strong>@startDate.ToString("dd MMMM")</strong>
             </div>
         }
     </div>

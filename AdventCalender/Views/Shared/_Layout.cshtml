@@ -48,7 +48,7 @@
                                     <li class="px-3 py-2 small text-muted border-bottom">@User.Identity.Name</li>
                                     @if (User.IsInRole("Seller"))
                                     {
-                                        <li><a class="dropdown-item py-2" asp-controller="Seller" asp-action="Dashboard">📈 Мой Магазин</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Seller" asp-action="Dashboard">Мой Магазин</a></li>
                                     }
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-2">
@@ -61,7 +61,7 @@
                         else
                         {
                             <a class="nav-link text-dark me-2 fw-semibold" asp-controller="Account" asp-action="Login">Вход</a>
-                            <a class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold hover-glow" asp-controller="Account" asp-action="Register">✨ Регистрация</a>
+                            <a class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold hover-glow" asp-controller="Account" asp-action="Register">Регистрация</a>
                         }
                     </div>
                     

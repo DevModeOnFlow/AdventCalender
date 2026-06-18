@@ -24,7 +24,7 @@ namespace AdventCalender.Data
 
             var seller = new ApplicationUser
             {
-                UserName = "seller@test.com",
+                UserName = "Тестовый пользователь",
                 Email = "seller@test.com",
                 StoreName = "Магазин Чудес",
                 EmailConfirmed = true,
