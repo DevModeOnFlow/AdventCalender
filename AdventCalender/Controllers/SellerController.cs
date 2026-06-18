@@ -26,11 +26,6 @@ namespace AdventCalender.Controllers
                 .Include(u => u.AdventDays)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (user != null && user.CalendarDaysCount == 0)
-            {
-                user.CalendarDaysCount = 24;
-                await _userManager.UpdateAsync(user);
-            }
 
             return View(user);
         }
@@ -53,6 +48,7 @@ namespace AdventCalender.Controllers
 
                 user.CalendarStartDate = DateTime.SpecifyKind(calendarStartDate.Date, DateTimeKind.Utc);
                 user.CalendarEndDate = DateTime.SpecifyKind(calendarEndDate.Date, DateTimeKind.Utc);
+                user.CalendarDaysCount = (user.CalendarEndDate.Date - user.CalendarStartDate.Date).Days + 1;
 
                 await _userManager.UpdateAsync(user);
                 TempData["Success"] = "Настройки магазина обновлены!";
