@@ -12,6 +12,7 @@ namespace AdventCalender.Data
         }
 
         public DbSet<AdventDay> AdventDays { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

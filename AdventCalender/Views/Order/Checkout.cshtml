@@ -1,0 +1,43 @@
+﻿@using System.Globalization
+@model AdventCalender.Models.Order
+
+@{
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="mb-3">Заказ №@Model.Id</h4>
+
+                    <p class="mb-1">День @Model.AdventDay?.DayNumber: <strong>@Model.AdventDay?.Title</strong></p>
+                    <p class="text-muted small mb-3">Продавец: @Model.AdventDay?.Seller?.StoreName</p>
+
+                    <h3 class="text-primary mb-4">@Model.Amount.ToString("C", CultureInfo.GetCultureInfo("en-US"))</h3>
+
+                    @if (Model.Status == AdventCalender.Models.OrderStatus.Paid)
+                    {
+                        <div class="alert alert-success">
+                            Оплата прошла успешно! Подарок открыт.
+                        </div>
+                        <a asp-controller="Calendar" asp-action="DayDetails" asp-route-id="@Model.AdventDayId" class="btn btn-outline-primary w-100">
+                            Перейти к подарку
+                        </a>
+                    }
+                    else
+                    {
+                        <form asp-controller="Order" asp-action="Pay" method="post">
+                            <input type="hidden" name="orderId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger btn-lg w-100">Оплатить</button>
+                        </form>
+                        <p class="text-muted small mt-3 mb-0">
+                            Оплата выполняется в тестовом режиме, без реального платёжного шлюза.
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

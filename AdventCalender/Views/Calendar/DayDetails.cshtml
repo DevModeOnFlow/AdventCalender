@@ -21,14 +21,14 @@
                             @if (Model.IsPaid)
                             {
                                 <div class="alert alert-success">
-                                    Этот товар уже оплачен! Вам доступен эксклюзивный контент.
+                                    Товар уже оплачен!
                                 </div>
                             }
                             else
                             {
-                                <form asp-action="BuyStub" method="post">
-                                    <input type="hidden" name="id" value="@Model.Id" />
-                                    <button type="submit" class="btn btn-warning btn-lg w-100">Купить (Тест)</button>
+                                <form asp-controller="Order" asp-action="CreateOrder" method="post">
+                                    <input type="hidden" name="adventDayId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-warning btn-lg w-100">Оплатить</button>
                                 </form>
                             }
                             <a asp-action="Index" asp-route-sellerId="@Model.SellerId" class="btn btn-link mt-3">Назад к календарю</a>
