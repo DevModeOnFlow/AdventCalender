@@ -1,4 +1,5 @@
-﻿@model AdventCalender.Models.ApplicationUser
+﻿@using System.Globalization
+@model AdventCalender.Models.ApplicationUser
 
 @{
     ViewData["Title"] = "Панель управления магазином";
@@ -150,7 +151,7 @@
                         @if (dayData != null)
                         {
                             <div class="small fw-bold text-truncate mb-1 px-1">@dayData.Title</div>
-                            <div class="text-danger fw-bold small mb-3">@dayData.Price.ToString("N0") ₽</div>
+                            <div class="text-danger fw-bold small mb-3">@dayData.Price.ToString("C", CultureInfo.GetCultureInfo("en-US"))</div>
                             
                             <div class="small text-muted mb-3" style="font-size: 0.65rem;">
                                 🕒 @dayData.StartTime.ToString(@"hh\:mm") - @dayData.EndTime.ToString(@"hh\:mm")

@@ -40,7 +40,7 @@ namespace AdventCalender.Controllers
 
             if (now.Date < targetDate)
             {
-                TempData["Message"] = $"Терпение! Этот подарок откроется только {targetDate:dd.MM.yyyy}";
+                TempData["Message"] = $"Ещё рано! Этот подарок откроется только {targetDate:dd.MM.yyyy}";
                 return RedirectToAction("Index", new { sellerId = seller.Id });
             }
 
